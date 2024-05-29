@@ -1,0 +1,38 @@
+{% extends 'index_messeges.html' %}
+
+{% block title %}Chat: {{ chat.name }}{% endblock %}
+
+{% block content %}
+<h2>Chat: {{ chat.name }}</h2>
+
+<ul class="list-unstyled">
+    {% for message in messages %}
+        <li class="mb-2 {% if message.author == request.user %}text-right{% else %}text-left{% endif %}">
+            {% if message.author == request.user %}
+                <strong>You</strong>: {{ message.content }}
+
+                <form method="post" action="{% url 'edit_message' message.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="message_id" value="{{ message.id }}">
+                    <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                </form>
+                <form method="post" action="{% url 'delete_message' message.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="message_id" value="{{ message.id }}">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            {% else %}
+                <strong>{{ message.author.username }}</strong>: {{ message.content }}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+<form method="post" action="{% url 'send_message' chat.id %}" class="mt-4">
+    {% csrf_token %}
+    <div class="form-group">
+        <textarea name="content" class="form-control" rows="3" placeholder="Your message..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Send</button>
+</form>
+{% endblock %}
+

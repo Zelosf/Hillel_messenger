@@ -1,0 +1,12 @@
+{% extends 'index_messeges.html' %}
+
+{% block content %}
+    <h2>Edit Message</h2>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="form-group">
+            <textarea class="form-control" rows="3" name="content">{{ message.content }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+{% endblock %}

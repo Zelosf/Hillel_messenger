@@ -1,0 +1,3 @@
+/venv/
+.idea
+/hillel_messenger/db.sqlite3
