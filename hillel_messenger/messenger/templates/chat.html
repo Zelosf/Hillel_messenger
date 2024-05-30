@@ -11,16 +11,20 @@
             {% if message.author == request.user %}
                 <strong>You</strong>: {{ message.content }}
 
-                <form method="post" action="{% url 'edit_message' message.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="message_id" value="{{ message.id }}">
-                    <button type="submit" class="btn btn-sm btn-primary">Edit</button>
-                </form>
-                <form method="post" action="{% url 'delete_message' message.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="message_id" value="{{ message.id }}">
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                </form>
+                {% if perms.messenger.can_edit_own_message %}
+                    <form method="post" action="{% url 'edit_message' message.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="message_id" value="{{ message.id }}">
+                        <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                    </form>
+                {% endif %}
+                {% if perms.messenger.can_delete_own_message %}
+                    <form method="post" action="{% url 'delete_message' message.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="message_id" value="{{ message.id }}">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                {% endif %}
             {% else %}
                 <strong>{{ message.author.username }}</strong>: {{ message.content }}
             {% endif %}

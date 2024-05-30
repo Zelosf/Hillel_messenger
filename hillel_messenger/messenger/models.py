@@ -7,6 +7,13 @@ class Chat(models.Model):
 	participants = models.ManyToManyField(User, related_name='chats')
 	created_at = models.DateTimeField(auto_now_add=True)
 
+	class Meta:
+		permissions = [
+			("can_create_chat", "Can Create chat"),
+			("can_add_users_to_chat", "Can Add users to chat"),
+			("can_remove_users_from_chat", "Can Remove users from chat"),
+		]
+
 	def __str__(self):
 		return self.name
 
@@ -18,5 +25,10 @@ class Message(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 
+	class Meta:
+		permissions = [
+			("can_edit_own_message", "Can Edit own message"),
+			("can_delete_own_message", "Can Delete own message"),
+		]
 	def __str__(self):
 		return f'{self.author.username}: {self.content[:20]}'
