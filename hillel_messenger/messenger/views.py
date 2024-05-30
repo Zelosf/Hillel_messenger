@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from .models import Chat, Message
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden, Http404
@@ -43,6 +43,7 @@ def send_message(request, chat_id):
 
 
 @login_required
+@permission_required('messenger.can_edit_own_message')
 def edit_message(request, message_id):
     try:
         message = Message.objects.get(id=message_id)
@@ -60,6 +61,7 @@ def edit_message(request, message_id):
 
 
 @login_required
+@permission_required('messenger.can_delete_own_message')
 def delete_message(request, message_id):
     try:
         message = Message.objects.get(id=message_id)
