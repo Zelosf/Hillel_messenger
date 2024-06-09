@@ -3,30 +3,38 @@
 {% block title %}Chat: {{ chat.name }}{% endblock %}
 
 {% block content %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 <h2>Chat: {{ chat.name }}</h2>
 
 <ul class="list-unstyled">
-    {% for message in messages %}
-        <li class="mb-2 {% if message.author == request.user %}text-right{% else %}text-left{% endif %}">
-            {% if message.author == request.user %}
-                <strong>You</strong>: {{ message.content }}
+    {% for chatmessage in chatmessages %}
+        <li class="mb-2 {% if chatmessage.author == request.user %}text-right{% else %}text-left{% endif %}">
+            {% if chatmessage.author == request.user %}
+                <strong>You</strong>: {{ chatmessage.content }}
 
                 {% if perms.messenger.can_edit_own_message %}
-                    <form method="post" action="{% url 'edit_message' message.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'edit_message' chatmessage.id %}" style="display: inline;">
                         {% csrf_token %}
-                        <input type="hidden" name="message_id" value="{{ message.id }}">
+                        <input type="hidden" name="chatmessage_id" value="{{ chatmessage.id }}">
                         <button type="submit" class="btn btn-sm btn-primary">Edit</button>
                     </form>
                 {% endif %}
                 {% if perms.messenger.can_delete_own_message %}
-                    <form method="post" action="{% url 'delete_message' message.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'delete_message' chatmessage.id %}" style="display: inline;">
                         {% csrf_token %}
-                        <input type="hidden" name="message_id" value="{{ message.id }}">
+                        <input type="hidden" name="message_id" value="{{ chatmessage.id }}">
                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                     </form>
                 {% endif %}
             {% else %}
-                <strong>{{ message.author.username }}</strong>: {{ message.content }}
+                <strong>{{ chatmessage.author.username }}</strong>: {{ chatmessage.content }}
             {% endif %}
         </li>
     {% endfor %}

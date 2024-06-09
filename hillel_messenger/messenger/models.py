@@ -19,6 +19,7 @@ class Chat(models.Model):
 
 
 class Message(models.Model):
+	objects = None
 	chat = models.ForeignKey(Chat, related_name='messages', on_delete=models.CASCADE)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	content = models.TextField()
@@ -30,5 +31,14 @@ class Message(models.Model):
 			("can_edit_own_message", "Can Edit own message"),
 			("can_delete_own_message", "Can Delete own message"),
 		]
+
 	def __str__(self):
 		return f'{self.author.username}: {self.content[:20]}'
+
+
+class MessageLog(models.Model):
+	objects = None
+	author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+	action = models.CharField(max_length=500)
+	message = models.ForeignKey(Message, on_delete=models.CASCADE)
+	timestamp = models.DateTimeField(auto_now_add=True)
