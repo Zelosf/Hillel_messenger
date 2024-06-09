@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Chat, Message
+from .models import Chat, Message, MessageLog
 
 
 class ChatAdmin(admin.ModelAdmin):
@@ -11,6 +11,11 @@ class ChatAdmin(admin.ModelAdmin):
 class MessageAdmin(admin.ModelAdmin):
 	list_display = ('author', 'chat', 'content', 'updated_at')
 	search_fields = ('author__username', 'content')
+
+
+@admin.register(MessageLog)
+class MessageLogAdmin(admin.ModelAdmin):
+	list_display = ('id', 'author', 'action', 'timestamp')
 
 
 admin.site.register(Chat, ChatAdmin)

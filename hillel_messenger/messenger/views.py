@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
-from .models import Chat, Message
+from .models import Chat, Message, MessageLog
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden, Http404
+from django.contrib import messages
+
 
 
 
@@ -22,7 +24,7 @@ def chat_detail(request, chat_id):
     if request.user not in chat.participants.all():
         return HttpResponseForbidden()
     messages = chat.messages.all()
-    return render(request, 'chat.html', {'chat': chat, 'messages': messages})
+    return render(request, 'chat.html', {'chat': chat, 'chatmessages': messages})
 
 
 
@@ -38,6 +40,10 @@ def send_message(request, chat_id):
         content = request.POST.get('content')
         if content:
             Message.objects.create(chat=chat, author=request.user, content=content)
+            if chat.participants.count() == 2:
+                other_user = chat.participants.exclude(id=request.user.id).first()
+                if other_user.is_superuser:
+                    messages.success(request, 'Ви успішно надіслали повідомлення суперюзеру')
     return redirect('chat_detail', chat_id=chat.id)
 
 
