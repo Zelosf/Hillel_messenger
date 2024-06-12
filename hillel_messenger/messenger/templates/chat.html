@@ -1,9 +1,14 @@
 {% extends 'index_messeges.html' %}
-
+{% load static %}
 {% block title %}Chat: {{ chat.name }}{% endblock %}
 
 {% block content %}
+    {% block extra_js %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="{% static 'js/user_status.js' %}"></script>
+    {% endblock extra_js %}
 
+    <div id="user-status-list"></div>
     {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -46,5 +51,8 @@
     </div>
     <button type="submit" class="btn btn-primary">Send</button>
 </form>
+
+
+
 {% endblock %}
 

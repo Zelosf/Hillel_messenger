@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
-from .models import Chat, Message, MessageLog
+from .models import Chat, Message, MessageLog, UserStatus
 from django.contrib.auth.models import User
-from django.http import HttpResponseForbidden, Http404
+from django.http import HttpResponseForbidden, Http404, JsonResponse
 from django.contrib import messages
 
 
@@ -47,7 +47,6 @@ def send_message(request, chat_id):
     return redirect('chat_detail', chat_id=chat.id)
 
 
-
 @login_required
 @permission_required('messenger.can_edit_own_message')
 def edit_message(request, message_id):
@@ -78,3 +77,23 @@ def delete_message(request, message_id):
     chat_id = message.chat.id
     message.delete()
     return redirect('chat_detail', chat_id=chat_id)
+
+
+@login_required
+def user_status_list(request, chat_id):
+    try:
+        chat = Chat.objects.get(id=chat_id)
+    except Chat.DoesNotExist:
+        raise Http404("Chat not found")
+    if request.user not in chat.participants.all():
+        return HttpResponseForbidden()
+
+    users_data = []
+    for participant in chat.participants.all():
+        try:
+            user_status = UserStatus.objects.get(user=participant)
+            users_data.append({'name': participant.username, 'is_online': user_status.is_online})
+        except UserStatus.DoesNotExist:
+            users_data.append({'name': participant.username, 'is_online': False})
+
+    return JsonResponse(users_data, safe=False)
