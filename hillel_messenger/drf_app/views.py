@@ -19,10 +19,7 @@ class ChatMessages(generics.ListAPIView):
 		chat_id = self.kwargs['chat_id']
 		user = self.request.user
 		chat = Chat.objects.filter(id=chat_id, participants=user).first()
-		if chat:
-			return Message.objects.filter(chat=chat, author=user)
-		else:
-			return Message.objects.none()
+		return Message.objects.filter(chat=chat, author=user)
 
 
 class MessageCreate(generics.CreateAPIView):
