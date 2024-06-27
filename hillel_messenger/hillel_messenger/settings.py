@@ -79,10 +79,22 @@ WSGI_APPLICATION = 'hillel_messenger.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_db2',
+        'USER': 'user_django_db2',
+        'PASSWORD': 'password',
+        'HOST': 'psql_db',
+        'PORT': ''
     }
 }
 
