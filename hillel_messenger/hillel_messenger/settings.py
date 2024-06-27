@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'messenger',
     'drf_app',
     'drf_yasg',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 LOGIN_URL = 'account/login/'
+
+from .celery import app
+from celery.schedules import crontab
+# from messenger.tasks import get_last_ten_messages
+
+app.conf.beat_schedule = {
+    'log-last-ten-messages-every-5-min':{
+        'task': 'messenger.tasks.get_last_ten_messages',
+        'schedule': crontab(minute='*/5'),
+    }
+}
