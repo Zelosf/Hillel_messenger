@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'messenger',
     'drf_app',
     'drf_yasg',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -79,10 +80,22 @@ WSGI_APPLICATION = 'hillel_messenger.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_db2',
+        'USER': 'user_django_db2',
+        'PASSWORD': 'password',
+        'HOST': 'psql_db',
+        'PORT': ''
     }
 }
 
@@ -135,3 +148,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 LOGIN_URL = 'account/login/'
+
+from .celery import app
+from celery.schedules import crontab
+# from messenger.tasks import get_last_ten_messages
+
+app.conf.beat_schedule = {
+    'log-last-ten-messages-every-5-min':{
+        'task': 'messenger.tasks.get_last_ten_messages',
+        'schedule': crontab(minute='*/5'),
+    }
+}
